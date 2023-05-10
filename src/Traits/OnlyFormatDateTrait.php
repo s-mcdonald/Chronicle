@@ -16,7 +16,6 @@ trait OnlyFormatDateTrait
                 'Y%sm%sd',
                 $sep->value,
                 $sep->value,
-                $sep->value
             )
         );
     }

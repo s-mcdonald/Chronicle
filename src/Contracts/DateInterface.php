@@ -20,5 +20,5 @@ interface DateInterface
 
     public function toDateTimeImmutable(): \DateTimeImmutable;
 
-    public function getUnixTimestamp(): bool|int;
+    public function getUnixTimestamp(): int;
 }

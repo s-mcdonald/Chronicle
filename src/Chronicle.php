@@ -4,24 +4,23 @@ declare(strict_types=1);
 
 namespace SamMcDonald\Chronicle;
 
-use DateTimeImmutable;
 use DateTimeInterface;
 use SamMcDonald\Chronicle\Components\Date;
-use SamMcDonald\Chronicle\Contracts\DateInterface;
+use SamMcDonald\Chronicle\Enums\DateShiftRule;
 
-class Chronicle extends DateTimeImmutable
+class Chronicle
 {
-    private function __construct()
-    {
-        parent::__construct();
+    private const YEARS_IN_LEAP = 4;
+
+    public static function createDate(
+        int $day,
+        int $month,
+        int $year
+    ): Date {
+        return Date::create($day, $month, $year);
     }
 
-//    public static function createDate(string $strDate): DateInterface
-//    {
-//        return Date::createFromString();
-//    }
-
-    public static function dateNow(): DateInterface
+    public static function dateNow(): Date
     {
         return Date::createNow();
     }
@@ -29,7 +28,7 @@ class Chronicle extends DateTimeImmutable
     /**
      * @throws \Exception
      */
-    public static function dateLastWeek(): DateInterface
+    public static function dateLastWeek(): Date
     {
         return Date::dateLastWeek();
     }
@@ -37,7 +36,7 @@ class Chronicle extends DateTimeImmutable
     /**
      * @throws \Exception
      */
-    public static function dateNextWeek(): DateInterface
+    public static function dateNextWeek(): Date
     {
         return Date::dateNextWeek();
     }
@@ -45,24 +44,29 @@ class Chronicle extends DateTimeImmutable
     /**
      * @throws \Exception
      */
-    public static function dateTomorrow(): DateInterface
+    public static function dateTomorrow(): Date
     {
         return Date::dateTomorrow();
     }
 
-    public static function dateYesterday(): DateInterface
+    public static function dateYesterday(): Date
     {
         return Date::dateYesterday();
     }
 
-    public static function dateLastFortnight(): DateInterface
+    public static function dateLastFortnight(): Date
     {
         return Date::dateLastFortnight();
     }
 
-    public static function dateNextFortnight(): DateInterface
+    public static function dateNextFortnight(): Date
     {
         return Date::dateNextFortnight();
+    }
+
+    public static function weekOfYear(): int
+    {
+        return self::dateNow()->getWeekOfYear();
     }
 
     public static function getWeekOfYear(mixed $date): int
@@ -94,5 +98,28 @@ class Chronicle extends DateTimeImmutable
         }
 
         return $date1->ago($date2);
+    }
+
+    public static function dayOfWeek(): string
+    {
+        return Date::today()->getDayOfWeek();
+    }
+
+    public static function monthOfYear(): string
+    {
+        return Date::today()->getMonthOfYear();
+    }
+
+    public static function isLeapYear(int $year): bool
+    {
+        return $year % self::YEARS_IN_LEAP == 0;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public static function sameDayLastMonth(DateShiftRule $rule = DateShiftRule::PhpCore): Date
+    {
+        return Date::today()->getSameDayLastMonth($rule);
     }
 }

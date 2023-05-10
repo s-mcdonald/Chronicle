@@ -6,9 +6,12 @@ namespace SamMcDonald\Chronicle\Components;
 
 use DateTimeInterface;
 use Exception;
+use SamMcDonald\Chronicle\Chronicle;
 use SamMcDonald\Chronicle\Contracts\DateInterface;
 use SamMcDonald\Chronicle\Contracts\DateStringFormatsInterface;
 use SamMcDonald\Chronicle\Contracts\MySqlDateTimeInterface;
+use SamMcDonald\Chronicle\Enums\DateShiftRule;
+use SamMcDonald\Chronicle\Enums\MonthOfYear;
 use SamMcDonald\Chronicle\Traits\OnlyFormatDateTrait;
 use Stringable;
 
@@ -24,6 +27,8 @@ class Date implements DateInterface, DateStringFormatsInterface, MySqlDateTimeIn
 
     public const ONE_DAY = 1;
 
+    private const SINGLE_UNIT = 1;
+
     private readonly int $weekOfYear;
 
     private const ZERO_TIMESTAMP = '00:00:00';
@@ -34,6 +39,14 @@ class Date implements DateInterface, DateStringFormatsInterface, MySqlDateTimeIn
         private readonly int $year
     ) {
         $this->weekOfYear = (int) $this->toDateTimeImmutable()->format("W");
+    }
+
+    public static function create(
+        int $day,
+        int $month,
+        int $year
+    ): Date {
+        return new Date($day, $month, $year);
     }
 
     public static function createFromTimestamp(string $timestamp): DateInterface
@@ -64,6 +77,44 @@ class Date implements DateInterface, DateStringFormatsInterface, MySqlDateTimeIn
         );
     }
 
+    /**
+     * @throws Exception
+     */
+    public function setDay(int $day): Date
+    {
+        $lastDayOfMonth = $this->copy()->shiftToLastDayOfMonth()->getDay();
+        if ($day < self::ONE_DAY || $day > $lastDayOfMonth) {
+            throw new Exception("Day out of range exception.");
+        }
+
+        return new static(
+            $day,
+            $this->month,
+            $this->year
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function setYear(int $year): Date
+    {
+        return new static(
+            $this->getDay(),
+            $this->getMonth(),
+            $year
+        );
+    }
+
+    public function setMonth(MonthOfYear $month): Date
+    {
+        return new static(
+            $this->day,
+            $month->value,
+            $this->year
+        );
+    }
+
     public static function today(): Date
     {
         return self::createFromDateTimeInterface(
@@ -71,6 +122,13 @@ class Date implements DateInterface, DateStringFormatsInterface, MySqlDateTimeIn
         );
     }
 
+    /**
+     * @see today()
+     * @deprecated Please use ::today() as it is the same method and
+     *             makes more sense to do so. Since the Date object
+     *             doesnt contain a time, the 'now' method seems
+     *             irrelevant compared to ::today().
+     */
     public static function createNow(): Date
     {
         return self::today();
@@ -106,16 +164,9 @@ class Date implements DateInterface, DateStringFormatsInterface, MySqlDateTimeIn
         return $this->weekOfYear;
     }
 
-    public function getUnixTimestamp(): false|int
-    {
-        return strtotime(
-            $this->year . '/' . $this->month . '/' . $this->day . ' ' . self::ZERO_TIMESTAMP
-        );
-    }
-
     public function isLeapYear(): bool
     {
-        return (bool) (int) $this->format("L");
+        return Chronicle::isLeapYear($this->year);
     }
 
     public function equals(Date $other): bool
@@ -126,9 +177,14 @@ class Date implements DateInterface, DateStringFormatsInterface, MySqlDateTimeIn
             && $this->year === $other->year;
     }
 
-    public function getTimestamp(): int
+    public function getUnixTimestamp(): int
     {
         return $this->toDateTimeImmutable()->getTimestamp();
+    }
+
+    public function getTimestamp(): int
+    {
+        return $this->getUnixTimestamp();
     }
 
     public function greaterThan(Date|DateTimeInterface $other): bool
@@ -165,7 +221,6 @@ class Date implements DateInterface, DateStringFormatsInterface, MySqlDateTimeIn
                 $this->year,
                 $this->month,
                 $this->day)
-            ->setTimestamp($this->getUnixTimestamp())
             ->setTime(0, 0, 0)
             ;
     }
@@ -364,7 +419,7 @@ class Date implements DateInterface, DateStringFormatsInterface, MySqlDateTimeIn
     public function shiftToFirstDayOfMonth(): Date
     {
         return new Date(
-            1,
+            self::ONE_DAY,
             $this->getMonth(),
             $this->getYear()
         );
@@ -400,22 +455,29 @@ class Date implements DateInterface, DateStringFormatsInterface, MySqlDateTimeIn
         );
     }
 
-//    public function sameDayLastMonth(int $strategy = 1): Date
-//    {
-//        if ($strategy > 1) {
-//            return $this->subMoths(1);
-//        }
-//
-//        if ($strategy > 2) {
-//            if ($this->getDay() > $this->previousMonthLastDay()) {
-//                return $this->setDay($this->previousMonthLastDay())->subMonths(1);
-//            }
-//        }
-//
-//        if ($strategy > 3) {
-//            if ($this->getDay() <= $this->previousMonthLastDay()) {
-//                return $this->subMonths(1);
-//            }
-//        }
-//    }
+    /**
+     * @throws Exception
+     */
+    public function getSameDayLastMonth(DateShiftRule $strategy = DateShiftRule::PhpCore): Date
+    {
+        if ($strategy === DateShiftRule::PhpCore) {
+            return $this->subMoths(self::SINGLE_UNIT);
+        }
+
+        $previousMonth = $this->shiftToFirstDayOfMonth()->yesterday()->shiftToLastDayOfMonth();
+
+        if ($this->getDay() >= $previousMonth->getDay()) {
+            return $previousMonth;
+        }
+
+        if ($strategy === DateShiftRule::Business && $this->getDay() === $this->shiftToLastDayOfMonth()->getDay()) {
+            return $previousMonth;
+        }
+
+        return new Date(
+            $this->getDay(),
+            $previousMonth->getMonth(),
+            $previousMonth->getYear()
+        );
+    }
 }

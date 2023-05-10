@@ -7,50 +7,104 @@ A lightweight utility for the most common operations.
 
 
 ```php
-        Chronicle::now();                                   // ChronicDateTime::class ->extends DateTime
-        Chronicle::dateNow();                               // ChronicDate::class
-        Chronicle::timeNow();                               // ChronicTime::class
-        Chronicle::dateLastWeek();                          // ChronicDate::class
-        Chronicle::dateNextWeek();                          // ChronicDate::class
-        Chronicle::dateTomorrow();                          // ChronicDate::class
-        Chronicle::dateYesterday();                         // ChronicDate::class
-        Chronicle::dateLastFortnight();                     // ChronicDate::class
-        Chronicle::dateNextFortnight();                     // ChronicDate::class
-        Chronicle::getWeekOfYear($date);                    // int (3 for the third week in Jan)
-        Chronicle::agoText($date1, $date2);                 // 6 days ago
-        
-        ChronicDate::createFromTimestamp();                 // ChronicDate::class
-        ChronicDate::createFromDateTimeInterface();         // ChronicDate::class
-        ChronicDate::copy();                                // ChronicDate::class
-        ChronicDate::today();                               // ChronicDate::class
-        ChronicDate::createNow();                           // ChronicDate::class
-        ChronicDate::getDay();                              // int
-        ChronicDate::getMonth();                            // int
-        ChronicDate::getYear();                             // int
-        ChronicDate::getWeekOfYear();                       // ChronicDate::class
-        ChronicDate::getUnixTimestamp();                    // int
-        ChronicDate::equals();                              // bool
-        ChronicDate::greaterThan();                         // bool
-        ChronicDate::getTimestamp();                        // int
-        ChronicDate::toMySqlDateTimeString();               // ChronicDate::class
-        ChronicDate::toDateTimeImmutable();                 // ChronicDate::class
-        ChronicDate::lastWeek();                            // ChronicDate::class
-        ChronicDate::nextWeek();                            // ChronicDate::class
-        ChronicDate::dateNextWeek();                        // ChronicDate::class
-        ChronicDate::dateLastWeek();                        // ChronicDate::class
-        ChronicDate::dateTomorrow();                        // ChronicDate::class
-        ChronicDate::yesterday();                           // ChronicDate::class
-        ChronicDate::lastFortnight();                       // ChronicDate::class
-        ChronicDate::nextFortnight();                       // ChronicDate::class
-        ChronicDate::addDays();                             // ChronicDate::class
-        ChronicDate::subDays();                             // ChronicDate::class
-        ChronicDate::addMonths();                           // ChronicDate::class
-        ChronicDate::subMoths();                            // ChronicDate::class
-        ChronicDate::addYears();                            // ChronicDate::class
-        ChronicDate::subYears();                            // ChronicDate::class
-        ChronicDate::shiftToFirstDayOfMonth();              // ChronicDate::class
-        ChronicDate::shiftToLastDayOfMonth();               // ChronicDate::class
-        ChronicDate::ago();                                 // string ( x days ago)
+    ///
+    /// Chronicle class
+    /// 
+    Chronicle::createDate(1,1,1969);
+    Chronicle::dateNow();
+    Chronicle::dateLastWeek();
+    Chronicle::dateNextWeek();
+    Chronicle::dateTomorrow();
+    Chronicle::dateYesterday();
+    Chronicle::dateLastFortnight();
+    Chronicle::dateNextFortnight();
+
+    Chronicle::sameDayLastMonth();
+    Chronicle::sameDayLastMonth(DateShiftRule::Business);
+    Chronicle::sameDayLastMonth(DateShiftRule::Strict);
+    
+    Chronicle::dayOfWeek();
+    Chronicle::monthOfYear();
+    Chronicle::agoText($date1, $date2);
+    
+    Chronicle::getWeekOfYear("2023-01-23");
+    Chronicle::weekOfYear();
+    
+    Chronicle::isLeapYear(2028);
+
+
+    ///
+    /// Date class
+    /// 
+    $today = Date::create(1,11, 2024);
+    $today->getDay();
+    $today->getMonth();
+    $today->getYear();
+    
+    $today->addDays(3);
+    $today->subDays(9);
+    $today->subMoths(1);
+    $today->subMoths(1)->addMonths(2);
+    $today->addYears(3);
+    $today->subYears(9);
+    
+    $today->getTimestamp();
+    $today->getUnixTimestamp();
+    $today->toMySqlDateTimeString();
+    $today->greaterThan($date);
+    $today->shiftToFirstDayOfMonth();
+    $today->shiftToLastDayOfMonth();
+    $today->tomorrow();
+    $today->yesterday();
+    $today->lastWeek();
+    $today->nextWeek();
+    $today->lastFortnight();
+    $today->nextFortnight();
+    $today->lastFortnight()->getDayOfWeek();
+    $today->nextFortnight()->tomorrow()->getDayOfWeek();
+    $today->nextFortnight()->addDays(1)->getDayOfWeek();
+    $today->getWeekOfYear();
+    $today->setYear(2024)->isLeapYear();
+    
+    ///
+    /// String formatting
+    /// 
+    $today->asYmd(DateSeperator::Dash);
+    $today->asYmd(DateSeperator::ForwardSlash);
+    $today->toShortDateString();
+    $today->toUSShortDateString();
+    $today->toLongDateString();
+    $today->getDayOfWeek();
+    $today->getMonthOfYear();
+    $today->getDayOfWeekInt();
+    $today->toAbbreviatedDayMonthYearString();
+    $today->toAbbreviatedMonthDayString();
+    
+    ///
+    /// Period Shifting
+    ///
+    $feb29->getSameDayLastMonth();
+    $feb29->getSameDayLastMonth(DateShiftRule::Business);
+    $feb29->getSameDayLastMonth(DateShiftRule::Strict);
+    
+    $july31->getSameDayLastMonth(DateShiftRule::PhpCore);
+    $july31->getSameDayLastMonth(DateShiftRule::Business);
+    $july31->getSameDayLastMonth(DateShiftRule::Strict);
+    
+    
+    ///
+    /// Static methods
+    ///
+    Date::createFromDateTimeInterface($dateTime);
+    Date::create();
+    Date::today();
+    Date::dateNextWeek();
+    Date::dateLastWeek();
+    Date::dateTomorrow();
+    Date::dateYesterday();
+    Date::dateLastFortnight();
+    Date::dateNextFortnight();
+    Date::validateDateString();
 
 
 ```
