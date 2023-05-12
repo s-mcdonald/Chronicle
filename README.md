@@ -12,7 +12,7 @@ Chronicle::isLeapYear(2028);                            // true
 Chronicle::agoText($date1, $date2);                     // 3 day ago
 ```
 
-The Date object represent just the date, no time, so there is no timezone component.
+The Date object represents just the date, no time, so there is no timezone component.
 You can express your date in fluent/chainable commands, and every value returned is both immutable, and a new object.
 
 ```php
@@ -59,7 +59,6 @@ for ($i = 0; $i < 5; $i++) {
 }
 
 
-
 echo "\n\n\nChronicle: FrozenClock\n---------------------\n";
 $frozen = new FrozenClock($clock->getDateTimeImmutable());
 for ($i = 0; $i < 5; $i++) {
@@ -71,8 +70,6 @@ for ($i = 0; $i < 5; $i++) {
 produces the following output
 
 ```
-
-
 Chronicle: Clock
 ---------------------
 12:21:07.758297
@@ -95,8 +92,8 @@ Chronicle: FrozenClock
 
 #### Time (object)
 Chronicle also comes with a Time class. As this is a time class, there is no notion of a date,
-so like the Date object, there is no need for a timezone. This purely assist in displaying and 
-formatting time and converting between object types.
+so like the Date object, there is no need for a timezone. This is purely to assist in 
+displaying and formatting time and converting between object types.
 
 Time object is immutable.
 
@@ -118,28 +115,30 @@ $time->toMySqlDateTimeString();             // 00-00-00 03:15:20
 
 #### More examples
 
+Most of the Chronicle methods are dealing with the current date or time. So for the values presented, the examples were 
+executed on `12-05-2023``
 ```php
 ///
 /// Chronicle class
 /// 
 Chronicle::createDate(1,1,1969);                        // 01-01-1969
-Chronicle::dateNow();                                   // 12-05-2023   (date executed was `12-05-2023`)
-Chronicle::dateLastWeek();                              // 05-05-2023   (date executed was `12-05-2023`)
-Chronicle::dateNextWeek();                              // 19-05-2023   (date executed was `12-05-2023`)
-Chronicle::dateTomorrow();                              // 13-05-2023   (date executed was `12-05-2023`)
-Chronicle::dateYesterday();                             // 11-05-2023   (date executed was `12-05-2023`)
-Chronicle::dateLastFortnight();                         // 28-04-2023   (date executed was `12-05-2023`)
-Chronicle::dateNextFortnight();                         // 26-05-2023   (date executed was `12-05-2023`)
+Chronicle::dateNow();                                   // 12-05-2023
+Chronicle::dateLastWeek();                              // 05-05-2023
+Chronicle::dateNextWeek();                              // 19-05-2023
+Chronicle::dateTomorrow();                              // 13-05-2023
+Chronicle::dateYesterday();                             // 11-05-2023
+Chronicle::dateLastFortnight();                         // 28-04-2023
+Chronicle::dateNextFortnight();                         // 26-05-2023
 
-Chronicle::sameDayLastMonth();                          // 12-04-2023   (date executed was `12-05-2023`)
-Chronicle::sameDayLastMonth(DateShiftRule::Business);   // 12-04-2023   (date executed was `12-05-2023`)
-Chronicle::sameDayLastMonth(DateShiftRule::Strict);     // 12-04-2023   (date executed was `12-05-2023`)
+Chronicle::sameDayLastMonth();                          // 12-04-2023
+Chronicle::sameDayLastMonth(DateShiftRule::Business);   // 12-04-2023
+Chronicle::sameDayLastMonth(DateShiftRule::Strict);     // 12-04-2023
 
-Chronicle::dayOfWeek();                                 // Friday       (date executed was `12-05-2023`)
-Chronicle::monthOfYear();                               // May          (date executed was `12-05-2023`)
+Chronicle::dayOfWeek();                                 // Friday    
+Chronicle::monthOfYear();                               // May
 Chronicle::agoText($date1, $date2);                     // 1 day ago
 
-Chronicle::getWeekOfYear("2023-01-23");                 // 4            (date executed was `12-05-2023`)
+Chronicle::getWeekOfYear("2023-01-23");                 // 4
 Chronicle::weekOfYear();                                // int value representing current week of the year
 
 Chronicle::isLeapYear(2028);                            // true
