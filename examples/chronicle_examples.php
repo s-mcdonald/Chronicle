@@ -23,9 +23,7 @@ echo 'Date: sameDayLastMonth         : ', Chronicle::sameDayLastMonth(DateShiftR
 
 echo "\n\nThe following methods return String values.\n\n";
 echo 'string: day of the week        : ', Chronicle::dayOfWeek(), PHP_EOL;
-echo 'string: day of the week        : ', Chronicle::dateNow()->getDayOfWeek(), PHP_EOL;
 echo 'string: month of the year      : ', Chronicle::monthOfYear(), PHP_EOL;
-echo 'string: month of the year      : ', Chronicle::dateNow()->getMonthOfYear(), PHP_EOL;
 echo 'string: time `ago` text        : ', Chronicle::agoText(Chronicle::dateYesterday(), Chronicle::dateNow()), PHP_EOL;
 echo "\n\n";
 
