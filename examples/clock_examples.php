@@ -10,7 +10,7 @@ echo "\n\n\nChronicle: Clock\n---------------------\n";
 $clock = new Clock();
 
 for ($i = 0; $i < 5; $i++) {
-    sleep(1);
+    sleep(3);
     echo $clock->getTime(), PHP_EOL;
 }
 
@@ -19,6 +19,6 @@ for ($i = 0; $i < 5; $i++) {
 echo "\n\n\nChronicle: FrozenClock\n---------------------\n";
 $frozen = new FrozenClock($clock->getDateTimeImmutable());
 for ($i = 0; $i < 5; $i++) {
-    sleep(1);
+    sleep(3);
     echo $frozen->getTime(), PHP_EOL;
 }
